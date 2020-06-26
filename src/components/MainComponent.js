@@ -15,13 +15,19 @@ import {
 	Button
 } from 'reactstrap';
 
+///TO DO
+// remove values button
+//create reset button
+//Refactor code into other files
+
 class Main extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			playersPerTeam     : '',
-			dynamicPlayerNames : [],
-			staticPlayerNames  : []
+			dynamicPlayerNames : [ '1', '2', '3', '4' ],
+			staticPlayerNames  : [ '1', '2', '3', '4' ],
+			isShuffleListShown : false
 		};
 	}
 
@@ -34,7 +40,6 @@ class Main extends Component {
 
 	addNumPlayersPerTeam = (playersPerTeam) => {
 		this.setState({ playersPerTeam: playersPerTeam });
-		console.log('MainstatePPT : ', this.state.playersPerTeam);
 	};
 
 	shuffleNames = () => {
@@ -50,53 +55,87 @@ class Main extends Component {
 		this.setState({ dynamicPlayerNames: shuffle(this.state.dynamicPlayerNames) });
 	};
 
+	handleGenerate = (playersPerTeam) => {
+		if (playersPerTeam) {
+			this.shuffleNames();
+			this.setState({
+				playersPerTeam     : playersPerTeam,
+				isShuffleListShown : true
+			});
+		} else {
+			alert('Please select how many players you would like per team');
+		}
+	};
+
 	createTeamList = () => {
 		const { playersPerTeam, dynamicPlayerNames } = this.state;
-		//players per team is getting updated on change every time... ONLY WHEN YOU HIT generate IT SHOULD BE UPDATED
+
 		const remainingPlayers = dynamicPlayerNames.length % playersPerTeam;
 		const numTeams = Math.floor(dynamicPlayerNames.length / playersPerTeam);
 		//outer loop to create parent
 		let j = 0;
+		const allPlayers = [];
 		for (let i = 0; i < numTeams; i++) {
 			const teamArray = dynamicPlayerNames.slice(j, j + playersPerTeam);
-			j += numTeams;
+			console.log('numteams:', numTeams);
 			console.log('j, your inverval', j);
-			return (
+			allPlayers.push(
 				<React.Fragment>
 					<h5 class="team-title">Team {i + 1}</h5>
 					<ul>
 						{teamArray.map((name) => {
+							console.log(name);
 							return <li class="player-result-list">{name}</li>;
 						})}
 					</ul>
 				</React.Fragment>
 			);
+			j += playersPerTeam;
+		}
+		const remainingPlayerArr = dynamicPlayerNames.slice(remainingPlayers * -1);
+		if (remainingPlayers === 0) {
+			return allPlayers;
+		} else if (remainingPlayers === 1) {
+			allPlayers.push(
+				<React.Fragment>
+					<h5 class="team-title">Round Robin Player</h5>
+					<ul>
+						<li class="player-result-list">{remainingPlayerArr[0]}</li>
+					</ul>
+				</React.Fragment>
+			);
+			return allPlayers;
+		} else {
+			allPlayers.push(
+				<React.Fragment>
+					<h5 class="team-title">Round Robin Players</h5>
+					<ul>
+						{remainingPlayerArr.map((name) => {
+							console.log(name);
+							return <li class="player-result-list">{name}</li>;
+						})}
+					</ul>
+				</React.Fragment>
+			);
+			return allPlayers;
 		}
 	};
-
-	// reset
-
-	// generate
 
 	render() {
 		return (
 			<React.Fragment>
 				<Container>
 					<Jumbo />
-					<CardDeck>
-						<InstructionsCard />
-						<CalculatorCard
-							addName={this.addPlayerName}
-							addNumPlayersPerTeam={this.addNumPlayersPerTeam}
-							dynamicPlayerNames={this.state.dynamicPlayerNames}
-							staticPlayerNames={this.state.staticPlayerNames}
-						/>
-					</CardDeck>
-					<GenerateAndReset shuffleNames={this.shuffleNames} createTeamList={this.createTeamList} />
-					<ResultsCard
+					<Core
+						addPlayerName={this.addPlayerName}
+						addNumPlayersPerTeam={this.addNumPlayersPerTeam}
+						shuffleNames={this.shuffleNames}
+						createTeamList={this.createTeamList}
 						playersPerTeam={this.state.playersPerTeam}
 						dynamicPlayerNames={this.state.dynamicPlayerNames}
-						createTeamList={this.createTeamList}
+						staticPlayerNames={this.state.staticPlayerNames}
+						handleGenerate={this.handleGenerate}
+						isShuffleListShown={this.state.isShuffleListShown}
 					/>
 				</Container>
 				<Footer />
@@ -117,6 +156,72 @@ export function Jumbo(props) {
 			</div>
 		</div>
 	);
+}
+
+///EMPTY STATE BELOW
+
+class Core extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			playerName     : '',
+			playersPerTeam : ''
+		};
+	}
+
+	handleChange = (event) => {
+		this.setState({
+			[event.target.name]: event.target.value
+		});
+	};
+
+	handleAddNameClick = () => {
+		if (this.state.playerName) {
+			this.props.addPlayerName(this.state.playerName);
+			this.setState({ playerName: '' });
+			console.log('playaaaanameeee: ', this.state.playerName);
+		} else {
+			alert('Please Enter a Player Name');
+		}
+	};
+
+	keyPressed = (event) => {
+		if (event.key === 'Enter') {
+			this.handleAddNameClick();
+			event.target.value = '';
+		}
+	};
+
+	sendPlayersPerTeam = () => {
+		this.props.handleGenerate(+this.state.playersPerTeam);
+	};
+
+	render() {
+		return (
+			<React.Fragment>
+				<CardDeck>
+					<InstructionsCard />
+					<CalcCard
+						addName={this.props.addPlayerName}
+						handleChange={this.handleChange}
+						handleAddNameClick={this.handleAddNameClick}
+						staticPlayerNames={this.props.staticPlayerNames}
+						dynamicPlayerNames={this.props.dynamicPlayerNames}
+						playersPerTeam={+this.state.playersPerTeam}
+						keyPressed={this.keyPressed}
+						playerName={this.state.playerName}
+					/>
+				</CardDeck>
+				<GenerateResetResults
+					handleGenerate={this.sendPlayersPerTeam}
+					shuffleNames={this.props.shuffleNames}
+					createTeamList={this.props.createTeamList}
+					isShuffleListShown={this.props.isShuffleListShown}
+					playersPerTeam={+this.state.playersPerTeam}
+				/>
+			</React.Fragment>
+		);
+	}
 }
 
 export function InstructionsCard(props) {
@@ -142,111 +247,89 @@ export function InstructionsCard(props) {
 		</Card>
 	);
 }
-class CalculatorCard extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			playerName : ''
-		};
-	}
 
-	handleNameChange = (event) => {
-		this.setState({
-			[event.target.name]: event.target.value
-		});
-	};
-
-	handlePPTChange = (event) => {
-		this.props.addNumPlayersPerTeam(event.target.value);
-	};
-
-	handleAddNameClick = () => {
-		this.props.addName(this.state.playerName);
-		this.setState({ playerName: '' });
-	};
-
-	render() {
-		return (
-			<Card mb={4}>
-				<CardHeader>
-					<CardTitle>
-						<h3 className="mb-0">Generator</h3>
-					</CardTitle>
-				</CardHeader>
-				<CardBody className="px-4">
-					<hr className="card-hr mb-4" />
-					<Row className="players-per-team-div">
-						<Col sm={'12'} lg={'6'} className="players-per-team-label">
-							<Label htmlFor="numPerTeamDropDown">
-								<h5>Players Per Team</h5>
-							</Label>
-						</Col>
-						<Col sm="12" lg="6" className="players-per-team-select mx-auto">
+export function CalcCard(props) {
+	return (
+		<Card mb={4}>
+			<CardHeader>
+				<CardTitle>
+					<h3 className="mb-0">Generator</h3>
+				</CardTitle>
+			</CardHeader>
+			<CardBody className="px-4">
+				<hr className="card-hr mb-4" />
+				<Row className="players-per-team-div">
+					<Col sm={'12'} lg={'6'} className="players-per-team-label">
+						<Label htmlFor="numPerTeamDropDown">
+							<h5>Players Per Team</h5>
+						</Label>
+					</Col>
+					<Col sm="12" lg="6" className="players-per-team-select mx-auto">
+						<Input
+							onChange={props.handleChange}
+							type="select"
+							name="playersPerTeam"
+							id="numPerTeamDropDown"
+						>
+							<option>Select</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						</Input>
+					</Col>
+				</Row>
+				<Row>
+					<Col>
+						<InputGroup>
 							<Input
-								onChange={this.handlePPTChange}
-								type="select"
-								name="playersPerTeam"
-								id="numPerTeamDropDown"
-							>
-								<option>Select</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
-							</Input>
-						</Col>
-					</Row>
-					<Row>
-						<Col>
-							<InputGroup>
-								<Input
-									autocomplete="off"
-									type="text"
-									name="playerName"
-									id="nameInput"
-									placeholder="Add a Player"
-									onChange={this.handleNameChange}
-									value={this.state.playerName}
-								/>
-								<InputGroupAddon addonType="append">
-									<Button
-										color="info"
-										type="button"
-										name="addPlayer"
-										id="addPlayerBtn"
-										onClick={this.handleAddNameClick}
-									>
-										<i class="fas fa-plus" />
-									</Button>
-								</InputGroupAddon>
-							</InputGroup>
-						</Col>
-					</Row>
-					<Row className="text-center">
-						<Col>
-							<div class="info-div">
-								<hr className="card-hr mt-4" />
-								<h5 class="">Players</h5>
-								<hr className="card-hr" />
-							</div>
-							<div class="user-input-div" id="user-input-div">
-								<h6 class="text-muted">Player names will appear here...</h6>
-								{this.props.staticPlayerNames.map((playerName) => {
-									return <PlayerName playerName={playerName} />;
-								})}
-							</div>
-						</Col>
-					</Row>
-				</CardBody>
-			</Card>
-		);
-	}
+								autocomplete="off"
+								type="text"
+								name="playerName"
+								id="nameInput"
+								placeholder="Add a Player"
+								onChange={props.handleChange}
+								onKeyPress={props.keyPressed}
+								value={props.playerName}
+							/>
+							<InputGroupAddon addonType="append">
+								<Button
+									color="info"
+									type="button"
+									name="addPlayer"
+									id="addPlayerBtn"
+									onClick={props.handleAddNameClick}
+								>
+									<i class="fas fa-plus" />
+								</Button>
+							</InputGroupAddon>
+						</InputGroup>
+					</Col>
+				</Row>
+				<Row className="text-center">
+					<Col>
+						<div class="info-div">
+							<hr className="card-hr mt-4" />
+							<h5 class="">Players</h5>
+							<hr className="card-hr" />
+						</div>
+						<div class="user-input-div" id="user-input-div">
+							<h6 class="text-muted">Player names will appear here...</h6>
+							{props.staticPlayerNames.map((playerName) => {
+								return <PlayerName playerName={playerName} />;
+							})}
+						</div>
+					</Col>
+				</Row>
+			</CardBody>
+		</Card>
+	);
 }
 
 export function PlayerName(props) {
@@ -264,13 +347,20 @@ export function PlayerName(props) {
 	);
 }
 
-//when you click this button, the ppt from calc state gets added to main state
-export function GenerateAndReset(props) {
-	const handleGenerate = () => {
-		props.shuffleNames();
-		// props.createTeamList();
-	};
+export function GenerateResetResults(props) {
+	return (
+		<React.Fragment>
+			<CalcButtons
+				handleGenerate={props.handleGenerate}
+				dynamicPlayerNames={props.dynamicPlayerNames}
+				playersPerTeam={props.playersPerTeam}
+			/>
+			<ResultsCard createTeamList={props.createTeamList} isShuffleListShown={props.isShuffleListShown} />
+		</React.Fragment>
+	);
+}
 
+export function CalcButtons(props) {
 	return (
 		<div className="hr-button-div">
 			<hr />
@@ -281,7 +371,7 @@ export function GenerateAndReset(props) {
 					type="button"
 					name="submitBtn"
 					id="submitBtn"
-					onClick={handleGenerate}
+					onClick={() => props.handleGenerate(props.playersPerTeam)}
 				>
 					Generate Teams
 				</Button>
@@ -293,7 +383,7 @@ export function GenerateAndReset(props) {
 	);
 }
 
-function ResultsCard(props) {
+export function ResultsCard(props) {
 	return (
 		<Row>
 			<Col md={{ size: 6, offset: 3 }}>
@@ -304,8 +394,11 @@ function ResultsCard(props) {
 						</CardTitle>
 					</CardHeader>
 					<CardBody className="result-div">
-						<h6 class="text-muted">Player names will appear here...</h6>
-						{props.createTeamList()}
+						{props.isShuffleListShown ? (
+							props.createTeamList()
+						) : (
+							<h6 class="text-muted">Player names will appear here...</h6>
+						)}
 					</CardBody>
 				</Card>
 			</Col>
