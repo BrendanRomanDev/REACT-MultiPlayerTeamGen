@@ -1,0 +1,265 @@
+/* font-family: 'Rajdhani', sans-serif;
+font-family: 'Ubuntu Mono', monospace;
+
+/* font-family: 'Ubuntu', sans-serif; */
+
+body {
+	font-family: 'Rajdhani', sans-serif;
+	background-color: #545d65;
+}
+
+p {
+	font-size: 1.4rem;
+	font-family: 'Ubuntu monospace', monospace;
+	text-transform: uppercase;
+	color: #b2b3b0;
+	margin: 0 auto;
+}
+
+ul {
+	list-style: none;
+}
+
+li {
+	text-align: left;
+	font-family: 'Ubuntu monospace', monospace;
+	font-size: 1.2rem;
+	color: #353c46;
+	margin: 25px auto 0;
+}
+@media (max-width: 992px) {
+	li {
+		font-size: 1rem;
+	}
+}
+
+h5 {
+	font-size: 1.4rem;
+	margin: 0;
+}
+
+.my-jumbo {
+	padding: 5% 0;
+	text-align: center;
+}
+
+.page-title {
+	color: #ceff1a;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.subtitle {
+	color: #acbdba;
+	font-size: 2rem;
+	letter-spacing: .5px;
+}
+
+.card {
+	border: none;
+	text-align: center;
+	border-radius: 8px;
+}
+
+.card-header {
+	line-height: 0;
+	background-color: #353c46;
+	padding: 3% 0;
+}
+.card-title {
+	margin: 0;
+	color: #ff715b;
+	letter-spacing: 2.5px;
+	font-size: 1.8rem;
+}
+
+.card-hr {
+	background-color: #cccdca;
+	width: 50%;
+	opacity: 30%;
+	margin: 10px auto;
+}
+
+.card-body {
+	background-color: #eef0f2;
+	border-radius: 8px;
+}
+
+.info-div {
+	position: relative;
+}
+
+.info-header {
+	background-color: #616163;
+	margin: 0 auto;
+	color: #f0f7f4;
+	font-size: 1.2rem;
+	padding: 5px;
+	border-radius: 6px;
+	position: absolute;
+	top: -15px;
+	left: 50%;
+	transform: translate(-50%);
+}
+
+/* .players-per-team-div {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-evenly;
+	align-items: center;
+} */
+
+/* .players-per-team-div h5 {
+	display: flex;
+	margin-bottom: 10px;
+} */
+.players-per-team-div {
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.players-per-team-label {
+	font-size: 1.5rem;
+}
+
+.players-per-team-select {
+	max-width: 200px;
+	font-family: 'Ubuntu monospace', monospace;
+}
+
+
+
+.text-muted {
+	font-style: italic;
+}
+
+.btn-info {
+	background-color: #2176ae;
+	border: 1px solid #0c2a7f;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+	background-color: #4291be;
+	border: 1px solid #0c2a7f;
+}
+
+.btn-danger {
+	background-color: #ec6652;
+	border: 1px solid #b44437;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+	background-color: #ff7b64;
+	border: 1px solid #b44437;
+}
+
+.hr-button-div {
+	position: relative;
+	margin-top: 60px;
+	margin-bottom: 60px;
+}
+
+.hr-button-div hr {
+	background-color: #e8eddf;
+	opacity: 75%;
+}
+
+.program-button-div {
+	text-align: center;
+	position: absolute;
+	top: -22px;
+	left: 50%;
+	transform: translate(-50%);
+}
+
+@media (max-width: 768px) {
+	.program-button-div {
+		width: 100%;
+		left: 50%;
+	}
+}
+
+.user-input-div {
+	position: relative;
+}
+
+.player-item {
+	background-color: #fbfcfc;
+	position: relative;
+	height: 50px;
+	border-radius: 10px;
+	border-bottom: solid 1px #cccdca;
+	margin-top: 5px;
+}
+
+.player-name-h5 {
+	position: relative;
+	top: 25%;
+	left: 25px;
+	font-size: 1.2rem;
+	text-align: left;
+	letter-spacing: 2px;
+}
+
+.player-btn {
+	height: 25px;
+	width: 30px;
+	position: absolute;
+	right: 10%;
+	bottom: 22%;
+	font-size: 1rem;
+	font-weight: bolder;
+	background-color: #ec6f5a;
+	color: #eef0f2;
+	border: none;
+	border-radius: 5px;
+	border-bottom: 2px solid #ffb399;
+}
+
+/*Styles for your generated list */
+.team-title {
+	background-color: #fbfcfc;
+	position: relative;
+	height: 40px;
+	border-radius: 6px;
+	border-bottom: solid 1px #cccdca;
+	margin-top: 5px;
+	margin-bottom: 0;
+	line-height: 2;
+}
+
+.player-result-list {
+	position: relative;
+	right: 20px;
+	text-align: center;
+	color: #545d65;
+	font-size: 1rem;
+}
+
+/* footer */
+
+.footer {
+	position: relative;
+	margin-top: 80px;
+	height: 15vh;
+	background-color: #252a36;
+	text-align: center;
+}
+
+.footer p {
+	position: absolute;
+	font-family: 'Rajdhani', sans-serif;
+	text-transform: none;
+	font-size: .8rem;
+	left: 50%;
+	top: 40%;
+	transform: translate(-50%);
+}
