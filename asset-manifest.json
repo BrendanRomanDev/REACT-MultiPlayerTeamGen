@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/REACT-MultiPlayerTeamGen/static/css/main.819920d1.chunk.css",
+    "main.js": "/REACT-MultiPlayerTeamGen/static/js/main.f1535ae4.chunk.js",
+    "main.js.map": "/REACT-MultiPlayerTeamGen/static/js/main.f1535ae4.chunk.js.map",
+    "runtime-main.js": "/REACT-MultiPlayerTeamGen/static/js/runtime-main.ddbe5553.js",
+    "runtime-main.js.map": "/REACT-MultiPlayerTeamGen/static/js/runtime-main.ddbe5553.js.map",
+    "static/css/2.829c9cb5.chunk.css": "/REACT-MultiPlayerTeamGen/static/css/2.829c9cb5.chunk.css",
+    "static/js/2.11c7851a.chunk.js": "/REACT-MultiPlayerTeamGen/static/js/2.11c7851a.chunk.js",
+    "static/js/2.11c7851a.chunk.js.map": "/REACT-MultiPlayerTeamGen/static/js/2.11c7851a.chunk.js.map",
+    "index.html": "/REACT-MultiPlayerTeamGen/index.html",
+    "precache-manifest.b4d269c22bb7e9629625c5f617e8fe95.js": "/REACT-MultiPlayerTeamGen/precache-manifest.b4d269c22bb7e9629625c5f617e8fe95.js",
+    "service-worker.js": "/REACT-MultiPlayerTeamGen/service-worker.js",
+    "static/css/2.829c9cb5.chunk.css.map": "/REACT-MultiPlayerTeamGen/static/css/2.829c9cb5.chunk.css.map",
+    "static/css/main.819920d1.chunk.css.map": "/REACT-MultiPlayerTeamGen/static/css/main.819920d1.chunk.css.map",
+    "static/js/2.11c7851a.chunk.js.LICENSE.txt": "/REACT-MultiPlayerTeamGen/static/js/2.11c7851a.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/REACT-MultiPlayerTeamGen/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ddbe5553.js",
+    "static/css/2.829c9cb5.chunk.css",
+    "static/js/2.11c7851a.chunk.js",
+    "static/css/main.819920d1.chunk.css",
+    "static/js/main.f1535ae4.chunk.js"
+  ]
+}
