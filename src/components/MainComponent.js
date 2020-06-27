@@ -14,10 +14,10 @@ import {
 	Label,
 	Button
 } from 'reactstrap';
+import { animateScroll as scroll, scroller } from 'react-scroll';
 
 ///TO DO
-// remove values button
-//create reset button
+//react-scroll working
 //Refactor code into other files
 
 class Main extends Component {
@@ -25,8 +25,8 @@ class Main extends Component {
 		super(props);
 		this.state = {
 			playersPerTeam     : '',
-			dynamicPlayerNames : [ '1', '2', '3', '4' ],
-			staticPlayerNames  : [ '1', '2', '3', '4' ],
+			dynamicPlayerNames : [],
+			staticPlayerNames  : [],
 			isShuffleListShown : false
 		};
 	}
@@ -42,7 +42,39 @@ class Main extends Component {
 		this.setState({ playersPerTeam: playersPerTeam });
 	};
 
+	delPlayerName = (playerName) => {
+		const newStaticArray = [ ...this.state.staticPlayerNames ];
+		const newDynamicArray = [ ...this.state.dynamicPlayerNames ];
+		let indexStatic = this.state.staticPlayerNames.indexOf(playerName);
+		let indexDynamic = this.state.dynamicPlayerNames.indexOf(playerName);
+		newStaticArray.splice(indexStatic, 1);
+		newDynamicArray.splice(indexDynamic, 1);
+		if (indexStatic > -1) {
+			this.setState({
+				staticPlayerNames : newStaticArray
+			});
+		}
+		if (indexDynamic > -1) {
+			this.setState({
+				dynamicPlayerNames : newDynamicArray
+			});
+		}
+
+		// 	const filterOutName = (nameArray) => {
+		// 		nameArray.filter((name) => {
+		// 			name === playerName;
+		// 		});
+		// 	};
+		// 	this.setState({
+		// 		...this.state,
+		// 		dynamicPlayerNames : filterOutName(this.state.dynamicPlayerNames),
+		// 		staticPlayerNames  : filterOutName(this.state.staticPlayerNames)
+		// 	});
+		// };
+	};
+
 	shuffleNames = () => {
+		const newArrayToShuffle = [ ...this.state.staticPlayerNames ];
 		const shuffle = (nameArray) => {
 			for (let i = nameArray.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
@@ -52,19 +84,37 @@ class Main extends Component {
 			}
 			return nameArray;
 		};
-		this.setState({ dynamicPlayerNames: shuffle(this.state.dynamicPlayerNames) });
+		this.setState({ dynamicPlayerNames: shuffle(newArrayToShuffle) });
+	};
+
+	scrollTo = () => {
+		scroller.scrollTo('footer', {
+			duration : 4000,
+			delay    : 0,
+			smooth   : 'easeOutCubic'
+		});
 	};
 
 	handleGenerate = (playersPerTeam) => {
 		if (playersPerTeam) {
+			this.scrollTo();
 			this.shuffleNames();
 			this.setState({
 				playersPerTeam     : playersPerTeam,
 				isShuffleListShown : true
 			});
 		} else {
-			alert('Please select how many players you would like per team');
+			alert('Please select the number of players per team.');
 		}
+	};
+
+	handleReset = () => {
+		this.setState({
+			playersPerTeam     : '',
+			dynamicPlayerNames : [],
+			staticPlayerNames  : [],
+			isShuffleListShown : false
+		});
 	};
 
 	createTeamList = () => {
@@ -129,13 +179,14 @@ class Main extends Component {
 					<Core
 						addPlayerName={this.addPlayerName}
 						addNumPlayersPerTeam={this.addNumPlayersPerTeam}
-						shuffleNames={this.shuffleNames}
 						createTeamList={this.createTeamList}
 						playersPerTeam={this.state.playersPerTeam}
 						dynamicPlayerNames={this.state.dynamicPlayerNames}
 						staticPlayerNames={this.state.staticPlayerNames}
 						handleGenerate={this.handleGenerate}
 						isShuffleListShown={this.state.isShuffleListShown}
+						delPlayerName={this.delPlayerName}
+						handleReset={this.handleReset}
 					/>
 				</Container>
 				<Footer />
@@ -181,7 +232,7 @@ class Core extends Component {
 			this.setState({ playerName: '' });
 			console.log('playaaaanameeee: ', this.state.playerName);
 		} else {
-			alert('Please Enter a Player Name');
+			alert('Please enter a player name.');
 		}
 	};
 
@@ -210,14 +261,16 @@ class Core extends Component {
 						playersPerTeam={+this.state.playersPerTeam}
 						keyPressed={this.keyPressed}
 						playerName={this.state.playerName}
+						delPlayerName={this.props.delPlayerName}
 					/>
 				</CardDeck>
 				<GenerateResetResults
 					handleGenerate={this.sendPlayersPerTeam}
-					shuffleNames={this.props.shuffleNames}
 					createTeamList={this.props.createTeamList}
 					isShuffleListShown={this.props.isShuffleListShown}
 					playersPerTeam={+this.state.playersPerTeam}
+					handleReset={this.props.handleReset}
+					dynamicPlayerNames={this.props.dynamicPlayerNames}
 				/>
 			</React.Fragment>
 		);
@@ -271,7 +324,7 @@ export function CalcCard(props) {
 							name="playersPerTeam"
 							id="numPerTeamDropDown"
 						>
-							<option>Select</option>
+							<option select="selected">Select</option>
 							<option value="1">1</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
@@ -320,10 +373,13 @@ export function CalcCard(props) {
 							<hr className="card-hr" />
 						</div>
 						<div class="user-input-div" id="user-input-div">
-							<h6 class="text-muted">Player names will appear here...</h6>
-							{props.staticPlayerNames.map((playerName) => {
-								return <PlayerName playerName={playerName} />;
-							})}
+							{props.staticPlayerNames.length ? (
+								props.staticPlayerNames.map((playerName) => {
+									return <PlayerName playerName={playerName} delPlayerName={props.delPlayerName} />;
+								})
+							) : (
+								<h6 class="text-muted">Player names will appear here...</h6>
+							)}
 						</div>
 					</Col>
 				</Row>
@@ -335,12 +391,12 @@ export function CalcCard(props) {
 export function PlayerName(props) {
 	return (
 		<React.Fragment>
-			<div class="user-input-div" id="user-input-div">
-				<div>
-					<div class="player-item">
-						<h5 class="player-name-h5">{props.playerName}</h5>
-						<button class="player-btn">-</button>
-					</div>
+			<div className="user-input-div" id="user-input-div">
+				<div className="player-item">
+					<h5 className="player-name-h5">{props.playerName}</h5>
+					<button className="player-btn" onClick={() => props.delPlayerName(props.playerName)}>
+						-
+					</button>
 				</div>
 			</div>
 		</React.Fragment>
@@ -354,8 +410,15 @@ export function GenerateResetResults(props) {
 				handleGenerate={props.handleGenerate}
 				dynamicPlayerNames={props.dynamicPlayerNames}
 				playersPerTeam={props.playersPerTeam}
+				handleReset={props.handleReset}
 			/>
-			<ResultsCard createTeamList={props.createTeamList} isShuffleListShown={props.isShuffleListShown} />
+			<ResultsCard
+				id="resultsCard"
+				name="resultsCard"
+				createTeamList={props.createTeamList}
+				isShuffleListShown={props.isShuffleListShown}
+				dynamicPlayerNames={props.dynamicPlayerNames}
+			/>
 		</React.Fragment>
 	);
 }
@@ -371,11 +434,18 @@ export function CalcButtons(props) {
 					type="button"
 					name="submitBtn"
 					id="submitBtn"
-					onClick={() => props.handleGenerate(props.playersPerTeam)}
+					onClick={props.handleGenerate}
 				>
 					Generate Teams
 				</Button>
-				<Button color="danger" className="btn btn-lg reset-button" type="button" name="resetBtn" id="resetBtn">
+				<Button
+					color="danger"
+					className="btn btn-lg reset-button"
+					type="button"
+					name="resetBtn"
+					id="resetBtn"
+					onClick={props.handleReset}
+				>
 					Reset
 				</Button>
 			</div>
@@ -394,7 +464,7 @@ export function ResultsCard(props) {
 						</CardTitle>
 					</CardHeader>
 					<CardBody className="result-div">
-						{props.isShuffleListShown ? (
+						{props.isShuffleListShown && props.dynamicPlayerNames.length ? (
 							props.createTeamList()
 						) : (
 							<h6 class="text-muted">Player names will appear here...</h6>
@@ -406,22 +476,10 @@ export function ResultsCard(props) {
 	);
 }
 
-export function TeamTitle(props) {
-	return <h5 class="team-title">Team{props.teamNumber}</h5>;
-}
-
-export function TeamGroup(props) {
-	return (
-		<ul>
-			<li class="player-result-list">TESTNAME</li>
-		</ul>
-	);
-}
-
 export function Footer(props) {
 	return (
-		<div class="footer">
-			<p class="credit-text">&copy; 2020 Brendan Roman</p>
+		<div className="footer">
+			<p className="credit-text">&copy; 2020 Brendan Roman</p>
 		</div>
 	);
 }
