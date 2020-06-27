@@ -87,7 +87,7 @@ class Main extends Component {
 		this.setState({ dynamicPlayerNames: shuffle(newArrayToShuffle) });
 	};
 
-	scrollTo = () => {
+	scrollToBot = () => {
 		scroller.scrollTo('footer', {
 			duration : 4000,
 			delay    : 0,
@@ -95,9 +95,17 @@ class Main extends Component {
 		});
 	};
 
+	scrollToTop = () => {
+		scroll.scrollToTop({
+			duration : 2000,
+			delay    : 0,
+			smooth   : 'easeOutCubic'
+		});
+	};
+
 	handleGenerate = (playersPerTeam) => {
 		if (playersPerTeam) {
-			this.scrollTo();
+			this.scrollToBot();
 			this.shuffleNames();
 			this.setState({
 				playersPerTeam     : playersPerTeam,
@@ -109,6 +117,7 @@ class Main extends Component {
 	};
 
 	handleReset = () => {
+		this.scrollToTop();
 		this.setState({
 			playersPerTeam     : '',
 			dynamicPlayerNames : [],
@@ -189,7 +198,7 @@ class Main extends Component {
 						handleReset={this.handleReset}
 					/>
 				</Container>
-				<Footer />
+				<Footer name="footer" />
 			</React.Fragment>
 		);
 	}
@@ -208,8 +217,6 @@ export function Jumbo(props) {
 		</div>
 	);
 }
-
-///EMPTY STATE BELOW
 
 class Core extends Component {
 	constructor(props) {
